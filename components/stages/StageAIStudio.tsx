@@ -320,22 +320,66 @@ export default function StageAIStudio({
             <button onClick={handleSkip} className="text-xs font-bold text-gray-400 hover:text-gray-700 flex items-center gap-1 bg-gray-200 hover:bg-gray-300 px-3 py-1.5 rounded-lg transition">Skip <SkipForward size={12} /></button>
          </div>
 
-         {/* INPUTS (Copy Paste) */}
-         <div className="space-y-2">
-            <div className="flex justify-between"><label className="text-xs font-bold text-gray-700">Partner (Optional)</label><span className="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">{TOKEN_COSTS.PARTNER} <Coins size={8}/></span></div>
-            <label className={`h-16 w-full border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${idolPhoto ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-purple-400 hover:bg-white'}`}>{idolPhoto ? (<div className="flex items-center gap-2 text-green-600 text-xs font-bold"><UserPlus size={16}/> Partner Added</div>) : (<div className="flex flex-col items-center text-gray-400 text-xs gap-1"><Upload size={16}/><span>Upload Photo</span></div>)}<input type="file" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if(f) { const r = new FileReader(); r.onload=()=>setIdolPhoto(r.result as string); r.readAsDataURL(f); }}} /></label>
-         </div>
+{/* INPUTS (Copy Paste) */}
+          <div className="space-y-2">
+             <div className="flex justify-between">
+                <label className="text-xs font-bold text-gray-700">Partner (Optional)</label>
+                <span className="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">{TOKEN_COSTS.PARTNER} <Coins size={8}/></span>
+             </div>
+             
+             {/* WRAPPER BARU: relative group untuk menampung input dan tombol delete */}
+             <div className="relative group">
+                 <label className={`h-16 w-full border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-all ${idolPhoto ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-purple-400 hover:bg-white'}`}>
+                    {idolPhoto ? (
+                        <div className="flex items-center gap-2 text-green-600 text-xs font-bold">
+                            <UserPlus size={16}/> Partner Added
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center text-gray-400 text-xs gap-1">
+                            <Upload size={16}/><span>Upload Photo</span>
+                        </div>
+                    )}
+                    <input 
+                        type="file" 
+                        className="hidden" 
+                        onChange={(e) => { 
+                           const f = e.target.files?.[0]; 
+                           if(f) { 
+                              const r = new FileReader(); 
+                              r.onload=()=>setIdolPhoto(r.result as string); 
+                              r.readAsDataURL(f); 
+                              e.target.value = ""; // Reset value agar bisa upload ulang file yang sama
+                           }
+                        }} 
+                    />
+                 </label>
 
-         <div className="space-y-4">
-            <div>
-                <div className="flex justify-between mb-1"><label className="text-xs font-bold text-gray-700">Background (Optional)</label><span className="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">{TOKEN_COSTS.BACKGROUND} <Coins size={8}/></span></div>
-                <div className="relative"><MapPin size={14} className="absolute left-3 top-3 text-gray-400"/><input className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-purple-200 outline-none transition" placeholder="e.g. Snowy Tokyo, Beach..." value={bgPrompt} onChange={(e) => setBgPrompt(e.target.value)}/></div>
-            </div>
-            <div>
-                <div className="flex justify-between items-center mb-1"><div className="flex gap-2 items-center"><label className="text-xs font-bold text-gray-700">Style Prompt</label><span className="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">{TOKEN_COSTS.STYLE} <Coins size={8}/></span></div><button onClick={handleEnhancePrompt} disabled={isEnhancing || !userPrompt || userTokens < TOKEN_COSTS.ENHANCE} className="text-[10px] flex items-center gap-1 text-purple-500 hover:text-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-bold bg-purple-50 px-2 py-0.5 rounded-full">{isEnhancing ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />}Enhance ({TOKEN_COSTS.ENHANCE} <Coins size={8}/>)</button></div>
-                <div className="relative"><textarea className="w-full p-3 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-purple-200 outline-none resize-none h-24" placeholder="Describe pose, outfit..." value={userPrompt} onChange={(e) => setUserPrompt(e.target.value)}/></div>
-            </div>
-         </div>
+                 {/* TOMBOL DELETE (X) - Hanya muncul jika idolPhoto ada */}
+                 {idolPhoto && (
+                     <button 
+                        onClick={(e) => {
+                           e.preventDefault(); // Mencegah membuka file explorer saat diklik
+                           setIdolPhoto(null);
+                        }}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-all z-20 hover:scale-110"
+                        title="Remove Partner"
+                     >
+                        <X size={12} />
+                     </button>
+                 )}
+             </div>
+          </div>
+
+          <div className="space-y-4">
+             <div>
+                 <div className="flex justify-between mb-1"><label className="text-xs font-bold text-gray-700">Background (Optional)</label><span className="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">{TOKEN_COSTS.BACKGROUND} <Coins size={8}/></span></div>
+                 <div className="relative"><MapPin size={14} className="absolute left-3 top-3 text-gray-400"/><input className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-purple-200 outline-none transition" placeholder="e.g. Snowy Tokyo, Beach..." value={bgPrompt} onChange={(e) => setBgPrompt(e.target.value)}/></div>
+             </div>
+             <div>
+                 <div className="flex justify-between items-center mb-1"><div className="flex gap-2 items-center"><label className="text-xs font-bold text-gray-700">Style Prompt</label><span className="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">{TOKEN_COSTS.STYLE} <Coins size={8}/></span></div><button onClick={handleEnhancePrompt} disabled={isEnhancing || !userPrompt || userTokens < TOKEN_COSTS.ENHANCE} className="text-[10px] flex items-center gap-1 text-purple-500 hover:text-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-bold bg-purple-50 px-2 py-0.5 rounded-full">{isEnhancing ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />}Enhance ({TOKEN_COSTS.ENHANCE} <Coins size={8}/>)</button></div>
+                 <div className="relative"><textarea className="w-full p-3 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-purple-200 outline-none resize-none h-24" placeholder="Describe pose, outfit..." value={userPrompt} onChange={(e) => setUserPrompt(e.target.value)}/></div>
+             </div>
+          </div>
 
          {/* ACTION BUTTONS (GANTI onBack dengan handleBack) */}
          <div className="mt-auto pt-6 border-t border-gray-200">
