@@ -47,6 +47,12 @@ interface StageAIStudioProps {
   onUpdateSession: (data: AISessionData) => void;
 }
 
+interface VoucherCode {
+  code: string;
+  value: number;
+  active: boolean;
+}
+
 export default function StageAIStudio({ 
   layout, 
   originalPhotos, 
@@ -72,7 +78,7 @@ export default function StageAIStudio({
   );
 
   // --- STATE LOKAL (Tidak perlu disimpan di parent) ---
-  const [validCodes, setValidCodes] = useState(INITIAL_VALID_CODES); 
+  const [validCodes, setValidCodes] = useState<VoucherCode[]>(INITIAL_VALID_CODES);
   const [showRedeemModal, setShowRedeemModal] = useState(userTokens === 0 && aiPhotos.every(p => p === null)); 
   const [redeemInput, setRedeemInput] = useState("");
   const [redeemStatus, setRedeemStatus] = useState<{type: 'success'|'error'|null, msg: string}>({type: null, msg: ""});
