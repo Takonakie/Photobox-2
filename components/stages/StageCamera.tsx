@@ -2,12 +2,13 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Webcam from "react-webcam";
 import { Camera, RotateCcw, ChevronRight, Timer, ArrowLeft, Upload, Clock } from "lucide-react";
-import { LayoutConfig, PhotoData } from "@/types/photobooth";
+import { LayoutConfig, PhotoData } from "@/src/types/photobooth";
 
 interface StageCameraProps {
   layout: LayoutConfig;
   onComplete: (photos: PhotoData[]) => void;
   onBack: () => void;
+  initialPhotos?: PhotoData[];
 }
 
 export default function StageCamera({ layout, onComplete, onBack, initialPhotos }: StageCameraProps) {
