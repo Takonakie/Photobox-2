@@ -154,11 +154,13 @@ export default function StageCamera({ layout, onComplete, onBack, initialPhotos 
   };
 
   // --- FINISH ---
-  const handleFinish = () => {
+const handleFinish = () => {
     const finalPhotos: PhotoData[] = photos.map((src, idx) => ({
         id: `photo-${Date.now()}-${idx}`,
         src: src || "",
-        filter: "none"
+        url: src || "", // Jaga-jaga jika PhotoData butuh 'url' juga
+        filter: "none",
+        useAI: false // <--- TAMBAHKAN BARIS INI (Wajib)
     }));
     onComplete(finalPhotos);
   };
